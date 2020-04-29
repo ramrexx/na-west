@@ -1,0 +1,52 @@
+---
+- name: Manage untagged ec2 instances
+  hosts: localhost
+  become: true
+  vars:
+    wait_for_stop: False
+
+  # load AWS variables from this group vars file
+  # vars_files:
+  # - group_vars/na-west
+
+  tasks:
+    - name: Build a list of instances
+      ec2_instance_info:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+      register: aws_instances
+
+    - name: Count aws_instances
+      debug:
+        var: aws_instances | length
+
+    - name: Filter instances based on AlwaysUp:NO tag or missing tag
+      set_fact:
+        instance_ids: "{{ aws_instances | json_query(aws_query) }}"
+      vars:
+        aws_query: "instances[?tags.AlwaysUp!='True'].instance_id"
+
+    - name: Log instance_ids
+      debug:
+        var: instance_ids
+
+    - name: Assign missing AlwaysUp tag
+      ec2_tag:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+        resource: "{{ item }}"
+        state: present
+        tags:
+          AlwaysUp: False
+      with_items: "{{ instance_ids }}"
+
+    - name: Stop the AlwaysUp:NO instances
+      ec2:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+        instance_ids: "{{ instance_ids }}"
+        state: stopped
+        wait: "{{ wait_for_stop }}"
