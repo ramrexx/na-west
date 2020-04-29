@@ -114,7 +114,7 @@
 
   - name: dump critical_vm value
     debug: 
-      var: critcal_vm
+      var: critical_vm
     when: debug_flag is defined
 
   - name: Launch {{ec2_instance_count}} AWS instances
