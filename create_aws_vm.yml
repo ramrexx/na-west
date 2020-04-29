@@ -112,7 +112,12 @@
       var: my_route_table
     when: debug_flag is defined
 
-  - name: Launch {{ec2_instance_count}} AWS instances for AlwaysUp = False Testing
+  - name: dump critical_vm value
+    debug: 
+      var: critcal_vm
+    when: debug_flag is defined
+
+  - name: Launch {{ec2_instance_count}} AWS instances
     ec2:
       access_key: "{{ ec2_access_key }}"
       secret_key: "{{ ec2_secret_key }}"
@@ -126,7 +131,7 @@
       instance_tags: 
         Name: "{{tower_user_name }}_test"
         ansible_group: "{{ec2_ansible_group }}"
-        AlwaysUp: False
+        AlwaysUp: "{{critical_vm}}"
       count: "{{ ec2_instance_count }}"
       wait: true
     register: ec2_result
