@@ -6,7 +6,7 @@
 
   # load AWS variables from this group vars file
   vars_files:
-  - group_vars/all
+  - group_vars/ctjon
 
   tasks:
   - name: Get EC2 Instance Facts
@@ -28,12 +28,10 @@
       access_key: "{{ ec2_access_key }}"
       secret_key: "{{ ec2_secret_key }}"
       region: "{{ ec2_region }}"
-      wait: true
+      wait: false
       instance_ids: "{{ item.instance_id }}"
       state: absent
       instance_initiated_shutdown_behavior: terminate
     with_items: "{{ ec2_result.instances }}"
-    async: 1000
-    poll: 0
 
  

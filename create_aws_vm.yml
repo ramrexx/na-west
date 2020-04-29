@@ -6,7 +6,7 @@
 
   # load AWS variables from this group vars file
   vars_files:
-  - group_vars/all
+  - group_vars/ctjon
 
   tasks:
   - name: create a VPC with dedicated tenancy and a couple of tags
@@ -119,8 +119,8 @@
 
   - name: Launch {{ec2_instance_count}} AWS instances
     ec2:
-      access_key: "{{ ec2_access_key }}"
-      secret_key: "{{ ec2_secret_key }}"
+      #access_key: "{{ ec2_access_key }}"
+      #secret_key: "{{ ec2_secret_key }}"
       keypair: "{{ ec2_keypair }}"
       group: "{{ my_security_group.group_name }}"
       group_id: "{{ my_security_group.group_id }}"
