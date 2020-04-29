@@ -129,9 +129,9 @@
       region: "{{ ec2_region }}"
       vpc_subnet_id: "{{ my_vpc_subnet.subnet.id }}"
       instance_tags: 
-        Name: "{{tower_user_name }}_test"
-        ansible_group: "{{ec2_ansible_group }}"
-        AlwaysUp: "{{critical_vm}}"
+        Name: "{{ tower_user_name }}_test"
+        ansible_group: "{{ ec2_ansible_group }}"
+        AlwaysUp: "{{ critical_vm }}"
       count: "{{ ec2_instance_count }}"
       wait: true
     register: ec2_result
