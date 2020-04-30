@@ -8,12 +8,7 @@
   - group_vars/na-west
 
   tasks:
-    # - role: manage-untagged-instances
-    #   aws_region: us-west-2
-    # - role: manage-untagged-instances
-    #   aws_region: us-west-1
-
-    - name: Use role in loop
+    - name: Loop through each region
       include_role:
         name: manage-untagged-instances
       vars:
@@ -21,12 +16,3 @@
       loop: "{{ aws_regions }}"
       loop_control:
         loop_var: aws_region_var
-    #
-    # - name: Loop over role
-    #   include_role:
-    #     name: manage-untagged-instances
-    #   loop: "{{ aws_regions }}"
-    #     aws_region: "{{ item }}"
-    #   with_items:
-    #   # - us-west-2
-    #   # - us-west-1
