@@ -5,9 +5,7 @@
   gather_facts: false
 
   roles:
-  - name: Loop through each aws_region
-
     - role: manage-untagged-instances
       aws_region: us-west-2
     - role: manage-untagged-instances
-      aws_region: us-west-1      
+      aws_region: us-west-1
