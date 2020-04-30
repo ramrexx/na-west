@@ -4,8 +4,17 @@
   connection: local
   gather_facts: false
 
-  roles:
-    - role: manage-untagged-instances
-      aws_region: us-west-2
-    - role: manage-untagged-instances
-      aws_region: us-west-1
+  tasks:
+    # - role: manage-untagged-instances
+    #   aws_region: us-west-2
+    # - role: manage-untagged-instances
+    #   aws_region: us-west-1
+
+    - name: Loop over role
+     include_role:
+      name: manage-untagged-instances
+     vars:
+      aws_region: "{{ item }}"
+     with_items: "{{ aws_regions }}"
+      # - us-west-2
+      # - us-west-1      
