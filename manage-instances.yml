@@ -1,0 +1,15 @@
+---
+- name: Manage Untagged Instances
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - name: Loop through each aws_region
+    include_role:
+      name: manage-untagged-instances
+    vars:
+      aws_region: "{{ item }}"
+    with_items:
+      - us-west-2
+      - us-west-1
