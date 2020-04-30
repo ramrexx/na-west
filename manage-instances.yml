@@ -13,11 +13,20 @@
     # - role: manage-untagged-instances
     #   aws_region: us-west-1
 
-    - name: Loop over role
+    - name: Use role in loop
       include_role:
         name: manage-untagged-instances
       vars:
-        aws_region: "{{ item }}"
-      with_items: "{{ aws_regions }}"
-      # - us-west-2
-      # - us-west-1
+        aws_region: "{{ aws_region_var }}"
+      loop: "{{ aws_regions }}"
+      loop_control:
+        loop_var: aws_region_var
+    #
+    # - name: Loop over role
+    #   include_role:
+    #     name: manage-untagged-instances
+    #   loop: "{{ aws_regions }}"
+    #     aws_region: "{{ item }}"
+    #   with_items:
+    #   # - us-west-2
+    #   # - us-west-1
