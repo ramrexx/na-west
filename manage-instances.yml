@@ -1,6 +1,6 @@
 ---
 - name: Manage Untagged Instances
-  hosts: localhost
+  hosts: all
   connection: local
   gather_facts: false
 
