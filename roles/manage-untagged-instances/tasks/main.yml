@@ -38,4 +38,4 @@
     region: "{{ aws_region }}"
     instance_ids: "{{ instance_ids }}"
     state: stopped
-    wait: "{{ wait_for_stop }}"
+    wait: False
