@@ -14,7 +14,7 @@
   set_fact:
     instance_ids: "{{ aws_instances | json_query(aws_query) }}"
   vars:
-    aws_query: "instances[?tags.AlwaysUp!='True'].instance_id"
+    aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
 
 - name: Log instance_ids
   debug:
