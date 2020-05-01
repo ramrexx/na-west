@@ -9,16 +9,19 @@
 - name: Count aws_instances
   debug:
     var: aws_instances | length
+  when: aws_instances.instances | length > 0
 
 - name: Filter instances based on AlwaysUp:NO tag or missing tag
   set_fact:
     instance_ids: "{{ aws_instances | json_query(aws_query) }}"
   vars:
     aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
+  when: aws_instances.instances | length > 0
 
 - name: Log instance_ids
   debug:
     var: instance_ids
+  when: instance_ids | length > 0
 
 - name: Assign missing AlwaysUp tag
   ec2_tag:
@@ -30,6 +33,7 @@
     tags:
       AlwaysUp: False
   with_items: "{{ instance_ids }}"
+  when: instance_ids | length > 0
 
 - name: Stop the AlwaysUp:NO instances
   ec2:
@@ -39,3 +43,4 @@
     instance_ids: "{{ instance_ids }}"
     state: stopped
     wait: False
+  when: instance_ids | length > 0
