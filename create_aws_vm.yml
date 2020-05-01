@@ -6,9 +6,16 @@
 
   # load AWS variables from this group vars file
   vars_files:
-  - group_vars/ctjon
+  - group_vars/all
 
   tasks:
+  - name: Verify that you have set a value for user_name before running
+    assert:
+      that:
+        - user_name is defined
+      fail_msg: "You must define your user_name in extra_vars"
+      success_msg: "user_name set to {{user_name}}"
+
   - name: create a VPC with dedicated tenancy and a couple of tags
     ec2_vpc_net:
       name: "{{ ec2_vpc_net_name }}"
