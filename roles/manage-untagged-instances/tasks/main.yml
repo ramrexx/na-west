@@ -8,13 +8,14 @@
 
 - name: "{{ aws_region }}: Count aws_instances"
   debug:
-    var: aws_instances | length
+    var: aws_instances.instances | length
 
 - name: "{{ aws_region }}: Filter instances based on AlwaysUp:False tag or missing tag"
   set_fact:
     aws_instance_ids: "{{ aws_instances | json_query(aws_query) }}"
   vars:
     aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
+  when: aws_instances.instances | length > 0
 
 - name: "{{ aws_region }}: Log aws_instance_ids"
   debug:
