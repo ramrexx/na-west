@@ -15,12 +15,10 @@
     aws_instance_ids: "{{ aws_instances | json_query(aws_query) }}"
   vars:
     aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
-  when: aws_instances.instances | length > 0
 
 - name: "{{ aws_region }}: Log aws_instance_ids"
   debug:
     var: aws_instance_ids
-  when: aws_instance_ids | length > 0
 
 - name: "{{ aws_region }}: Assign missing AlwaysUp tag"
   ec2_tag:
