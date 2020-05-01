@@ -12,7 +12,7 @@
 
 - name: "{{ aws_region }}: reset aws_instances variable"
   set_fact:
-    aws_instance_ids:
+    aws_instance_ids: []
 
 - name: "{{ aws_region }}: Filter instances based on AlwaysUp:False tag or missing tag"
   set_fact:
