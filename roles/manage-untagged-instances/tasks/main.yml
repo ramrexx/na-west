@@ -1,10 +1,16 @@
 ---
-- name: "{{ aws_region }}: Build a list of instances"
-  ec2_instance_info:
-    aws_access_key: "{{ aws_access_key }}"
-    aws_secret_key: "{{ aws_secret_key }}"
-    region: "{{ aws_region }}"
-  register: aws_instances
+  - block:
+    - name: "{{ aws_region }}: Build a list of instances"
+      ec2_instance_info:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        region: "{{ aws_region }}"
+      register: aws_instances
+      failed_when: aws_instances.instances | length == 0
+  rescue:
+    - name: "{{ aws_region }}: Failed to retrieve aws_instances"
+      debug:
+        msg: "{{ aws_region }}: Skipping region"
 
 - name: "{{ aws_region }}: Count aws_instances"
   debug:
