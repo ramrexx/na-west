@@ -1,5 +1,3 @@
-# Here are variables related to the standalone JBoss installation
-
 # Define user_name as an extra_var
 
 # AWS Specific Variables
