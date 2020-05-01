@@ -10,10 +10,6 @@
   debug:
     var: aws_instances.instances | length
 
-- name: "{{ aws_region }}: reset aws_instances variable"
-  set_fact:
-    aws_instance_ids: []
-
 - name: "{{ aws_region }}: Filter instances based on AlwaysUp:False tag or missing tag"
   set_fact:
     aws_instance_ids: "{{ aws_instances | json_query(aws_query) }}"
@@ -24,6 +20,7 @@
 - name: "{{ aws_region }}: Log aws_instance_ids"
   debug:
     var: aws_instance_ids
+  when: aws_instance_ids | length > 0
 
 - name: "{{ aws_region }}: Assign missing AlwaysUp tag"
   ec2_tag:
