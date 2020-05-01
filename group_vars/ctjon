@@ -30,3 +30,4 @@ wait_for_port: 22
 tower_user_name: ctjon
 debug_flag: true
 critical_vm: 'False'
+my_email_address: ctjon@redhat.com
