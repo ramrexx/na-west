@@ -13,15 +13,15 @@
 
 - name: "{{ aws_region }}: Filter instances based on AlwaysUp:False tag or missing tag"
   set_fact:
-    instance_ids: "{{ aws_instances | json_query(aws_query) }}"
+    aws_instance_ids: "{{ aws_instances | json_query(aws_query) }}"
   vars:
     aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
   when: aws_instances.instances | length > 0
 
-- name: "{{ aws_region }}: Log instance_ids"
+- name: "{{ aws_region }}: Log aws_instance_ids"
   debug:
-    var: instance_ids
-  when: instance_ids | length > 0
+    var: aws_instance_ids
+  when: aws_instance_ids | length > 0
 
 - name: "{{ aws_region }}: Assign missing AlwaysUp tag"
   ec2_tag:
@@ -32,15 +32,15 @@
     state: present
     tags:
       AlwaysUp: False
-  with_items: "{{ instance_ids }}"
-  when: instance_ids | length > 0
+  with_items: "{{ aws_instance_ids }}"
+  when: aws_instance_ids | length > 0
 
 - name: "{{ aws_region }}: Stop the AlwaysUp:False instances"
   ec2:
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
     region: "{{ aws_region }}"
-    instance_ids: "{{ instance_ids }}"
+    instance_ids: "{{ aws_instance_ids }}"
     state: stopped
     wait: False
-  when: instance_ids | length > 0
+  when: aws_instance_ids | length > 0
