@@ -9,7 +9,6 @@
 - name: "{{ aws_region }}: Count aws_instances"
   debug:
     var: aws_instances | length
-  when: aws_instances.instances | length > 0
 
 - name: "{{ aws_region }}: Filter instances based on AlwaysUp:False tag or missing tag"
   set_fact:
