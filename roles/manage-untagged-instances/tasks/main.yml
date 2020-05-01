@@ -43,4 +43,4 @@
     instance_ids: "{{ instance_ids }}"
     state: stopped
     wait: False
-  ignore_errors: yes
+  when: instance_ids | length > 0
