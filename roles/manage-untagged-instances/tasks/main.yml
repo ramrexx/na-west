@@ -1,26 +1,31 @@
 ---
-- name: Build a list of instances
+- name: "{{ aws_region }}: Build a list of instances"
   ec2_instance_info:
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
     region: "{{ aws_region }}"
   register: aws_instances
 
-- name: Count aws_instances
+- name: "{{ aws_region }}: Count aws_instances"
   debug:
-    var: aws_instances | length
+    var: aws_instances.instances | length
 
-- name: Filter instances based on AlwaysUp:NO tag or missing tag
+- name: "{{ aws_region }}: reset aws_instances variable"
   set_fact:
-    instance_ids: "{{ aws_instances | json_query(aws_query) }}"
+    aws_instance_ids: []
+
+- name: "{{ aws_region }}: Filter instances based on AlwaysUp:False tag or missing tag"
+  set_fact:
+    aws_instance_ids: "{{ aws_instances | json_query(aws_query) }}"
   vars:
     aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
+  # when: aws_instances.instances | length > 0
 
-- name: Log instance_ids
+- name: "{{ aws_region }}: Log aws_instance_ids"
   debug:
-    var: instance_ids
+    var: aws_instance_ids
 
-- name: Assign missing AlwaysUp tag
+- name: "{{ aws_region }}: Assign missing AlwaysUp tag"
   ec2_tag:
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
@@ -29,13 +34,15 @@
     state: present
     tags:
       AlwaysUp: False
-  with_items: "{{ instance_ids }}"
+  with_items: "{{ aws_instance_ids }}"
+  when: aws_instance_ids | length > 0
 
-- name: Stop the AlwaysUp:NO instances
+- name: "{{ aws_region }}: Stop the AlwaysUp:False instances"
   ec2:
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
     region: "{{ aws_region }}"
-    instance_ids: "{{ instance_ids }}"
+    instance_ids: "{{ aws_instance_ids }}"
     state: stopped
     wait: False
+  when: aws_instance_ids | length > 0
