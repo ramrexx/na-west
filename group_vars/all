@@ -22,7 +22,6 @@ ec2_hosts: all
 ec2_ansible_group: "{{user_name}}_test"
 open_ports_list:
   - 22
-  - 80
 
 # Other Variables
 instance_count: 3
