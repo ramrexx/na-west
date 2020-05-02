@@ -52,7 +52,7 @@
           cidr_ip: 0.0.0.0/0
           rule_desc: allow ping
         - proto: tcp
-          ports: "{{ open_port_list }}"
+          ports: "{{ open_ports_list }}"
           cidr_ip: 0.0.0.0/0
           rule_desc: allow all on port 22,80
     register: my_security_group
