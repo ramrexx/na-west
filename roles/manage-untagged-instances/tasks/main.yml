@@ -23,6 +23,7 @@
       msg:
         - "Number if instances found: {{ aws_instance_ids | length }}"
         - "List of instances: {{ aws_instance_ids }}"
+    failed_when: aws_instance_ids | length == 0
 
   - name: "{{ aws_region }}: Assign missing AlwaysUp tag"
     ec2_tag:
