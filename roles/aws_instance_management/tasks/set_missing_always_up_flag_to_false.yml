@@ -1,0 +1,23 @@
+---
+- name: Filter instances based on AlwaysUp:NO tag or missing tag
+  set_fact:
+    untagged_instances: "{{ aws_instances | json_query(aws_query) }}"
+  vars:
+    # False is here so that we don't unnecessarily re-tag machines we've gotten before
+    aws_query: results[*].instances[?tags.AlwaysUp!= 'True' && tags.AlwaysUp!= 'true' && tags.AlwaysUp!= 'yes' && tags.AlwaysUp!= 'Yes' && tags.AlwaysUp!= 'False']
+
+- name: Creating new list to properly format instances for consumption by the notificaiton role
+  set_fact:
+    instances: "{{ instances + [item] }}"
+  loop: "{{ untagged_instances|flatten(levels=1) }}"
+
+- name: Assign missing AlwaysUp tag"
+  ec2_tag:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ item.placement.availability_zone[:-1] }}"
+    resource: "{{ item.instance_id }}"
+    state: present
+    tags:
+      AlwaysUp: False
+  loop: "{{ instances | flatten(levels=1) }}"

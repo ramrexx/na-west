@@ -1,0 +1,34 @@
+{
+
+ "text": 
+    "*{{ header }}:*\n\n"
+
+    {% for region in aws_regions %}
+        "********* *Region: {{ region }}* *********\n"
+        {% set vars = { 'no_item_in_region' : True } %}
+        {% for instance in instances %}
+            {% if instance.instance_id is defined %}
+                {% if region in instance.placement.availability_zone %}
+                    {% set update = vars.update({ 'no_item_in_region' : False }) %}
+
+                    "-------------------------------------\n"
+                    "  Instance ID: {{ instance.instance_id }}\n" 
+                    "  DNS Name: {{ instance.public_dns_name }}\n"
+                    "  SSH Key: {{ instance.key_name }}\n"
+                    "  Associated Tags:\n"
+                    {% for key, value in instance.tags.items() %}
+
+                    "      {{ key }} : {{ value }}\n"
+                    {% endfor %}
+
+                    "\n"
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% if vars.no_item_in_region %}
+            "-----No Machines Affected in this Region-----\n"
+        {% endif %}
+    {% endfor %}
+
+}

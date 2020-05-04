@@ -1,0 +1,24 @@
+---
+- name: Filter instances based on AlwaysUp:NO tag or missing tag
+  set_fact:
+    untagged_instances: "{{ aws_instances | json_query(aws_query) }}"
+  vars:
+    aws_query: results[*].instances[?tags.AlwaysUp!= 'True' && tags.AlwaysUp!= 'true' && tags.AlwaysUp!= 'yes' && tags.AlwaysUp!= 'Yes']
+
+- name: Filter instances again (no need to send another shutdown call if they are already shutdown)
+  set_fact:
+    instances: "{{ instances + [item] }}"
+  loop: "{{ untagged_instances|flatten(levels=1) }}"
+  when: "{{ (item.state.name != 'stopped') }}"
+
+
+- name: Stop the AlwaysUp:False instances
+  ec2:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ item.placement.availability_zone[:-1] }}"
+    instance_ids: "{{ item.instance_id }}"
+    state: stopped
+    wait: False
+  loop: "{{ instances | flatten(levels=1) }}"
+  when: "{{ item.state.name != 'stopped' }}"

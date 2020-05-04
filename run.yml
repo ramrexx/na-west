@@ -1,0 +1,9 @@
+---
+- name: Run Roles
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Run aws_instance_management
+      include_role:
+        name: aws_instance_management

@@ -1,0 +1,14 @@
+---
+
+- name: Check that chat room URL is set
+  fail:
+    msg: "You must specify a webhook URL for the gchat room"
+  when: body is undefined
+
+- name: Send gchat notificaiton
+  uri:
+    url: "{{ url }}"
+    method: POST
+    body: "{{ body }}"
+    body_format: json
+    return_content: yes

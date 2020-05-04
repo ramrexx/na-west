@@ -1,0 +1,3 @@
+---
+# defaults file for ghcat-notification-role
+header: "you need to set the header var when calling the notification role to something appropriate"

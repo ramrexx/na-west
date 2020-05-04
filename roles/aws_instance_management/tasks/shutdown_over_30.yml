@@ -1,0 +1,40 @@
+---
+- name: Filter instances based on status of "stopped"
+  set_fact:
+    stopped_instances: "{{ aws_instances | json_query(aws_query) }}"
+  vars:
+    aws_query: results[*].instances[?state.name=='stopped']
+
+- name: Get date from 30 days ago
+  command: "date -u +'%Y-%m-%d %T' -d '-30 days'"
+  register: result
+
+- name: set a fact for 30 days ago
+  set_fact:
+    thirty_days_ago: "{{ result.stdout }}"
+
+
+- name: Create new list with instances to be terminated
+  set_fact:
+    instances: "{{ instances + [item] }}"
+  # god forgive me for this atrocity
+  # this loops through all the instances that are stopped, parses out the transition reason
+  # cuts it up a bit, then joins it so that we can have a proper datetime timestamp
+  # then we convert it to a datetime so we can math with it
+  # then subtract the timestamp from 30 days ago (while also converting it to a datetime)
+  # then take the total count of seconds and see if that count is less than the number of seconds in 30 days
+  # if your eyes hurt reading it, imagine how mine felt writing it...
+  loop: "{{ stopped_instances | flatten(levels=1) }}"
+  when: "{{ (((item.state_transition_reason.split('(')[1].split(' ')[:2] | join(' ') | to_datetime) - (thirty_days_ago | to_datetime)).total_seconds()) > 2592000 }}"
+
+- name: Nuke instances that have been shut off for more than 30 days
+  ec2:
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    region: "{{ item.placement.availability_zone[:-1] }}"
+    wait: false
+    instance_ids: "{{ item.instance_id }}"
+    state: absent
+  loop: "{{ instances | flatten(levels=1) }}"
+  when: "{{ item.state.name == 'stopped' }}"
+
