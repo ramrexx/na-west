@@ -1,0 +1,9 @@
+---
+- name: "Build a list of instances"
+  ec2_instance_info:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    region: "{{ item }}"
+  register: aws_instances
+  loop: "{{ aws_regions }}"
+

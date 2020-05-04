@@ -1,0 +1,38 @@
+---
+- name: Get Instance Data
+  include: get_instance_data.yml
+
+- name: Set fact for notification role
+  set_fact:
+    header: "The following instances were untagged and have had AlwaysUp tag set to false"
+    body: "{{ lookup('template', 'base_notification.j2') }}"
+  when: set_tags
+
+- name: Add tags if tags var is set
+  include: set_missing_always_up_flag_to_false.yml
+  when: set_tags
+
+- name: Set fact for notification role
+  set_fact:
+    header: "The following instances did not have AlwaysUp set to True and will be shutdown"
+    body: "{{ lookup('template', 'base_notification.j2') }}"
+  when: nightly_shutdown
+
+- name: Shut down instances if shutdown var is set
+  include: shutdown_instances.yml
+  when: nightly_shutdown
+
+- name: Set fact for notification role
+  set_fact:
+    header: "The following machines have been shutdown over 30 days and have been deleted"
+    body: "{{ lookup('template', 'base_notification.j2') }}"
+  when: shutdown_over_30
+
+- name: Delete instances if delete_over_30 var is set
+  include: shutdown_over_30.yml
+  when: shutdown_over_30
+
+- name: Run gChat Noticiation Role
+  include_role:
+    name: gchat_notification
+  when: instances

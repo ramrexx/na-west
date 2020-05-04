@@ -1,0 +1,3 @@
+---
+header: "No Header value was set"
+body: "{{ lookup('template', 'default.j2') }}"
