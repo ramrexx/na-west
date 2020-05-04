@@ -78,6 +78,7 @@
     ec2_vpc_subnet:
       state: present
       vpc_id: "{{ my_vpc.vpc.id }}"
+      region: "{{ ec2_region }}"
       cidr: "{{ ec2_cidr }}"
       map_public: yes
       tags:
@@ -95,6 +96,7 @@
   - name: create {{ ec2_igw_name }}"
     ec2_vpc_igw:
       vpc_id: "{{ my_vpc.vpc.id }}"
+      region: "{{ ec2_region }}"
       state: present
       tags:
         Name:: "{{ ec2_igw_name }}"
