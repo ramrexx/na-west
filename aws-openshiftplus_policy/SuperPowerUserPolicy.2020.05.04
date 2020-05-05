@@ -30,6 +30,7 @@
                 "ec2:CreateVpcEndpoint",
                 "ec2:DeleteDhcpOptions",
                 "ec2:DeleteInternetGateway",
+                "ec2:DeleteKeyPair",
                 "ec2:DeleteNatGateway",
                 "ec2:DeleteNetworkInterface",
                 "ec2:DeleteRoute",
