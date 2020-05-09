@@ -16,13 +16,12 @@
     set_fact:
       aws_instance_ids: "{{ aws_instances | json_query(aws_query) }}"
     vars:
-      aws_query: "instances[?tags.AlwaysUp!='True' && 'true' && 'yes' && 'Yes'].instance_id"
+      # Very ugly query but could not find another way
+      aws_query: "instances[?tags.AlwaysUp!='True']|[?tags.AlwaysUp!='TRUE']|[?tags.AlwaysUp!='true']|[?tags.AlwaysUp!='YES']|[?tags.AlwaysUp!='Yes']|[?tags.AlwaysUp!='yes'].instance_id"
 
   - name: "{{ aws_region }}: Log aws_instance_ids"
     debug:
-      msg:
-        - "Number if instances found: {{ aws_instance_ids | length }}"
-        - "List of instances: {{ aws_instance_ids }}"
+      msg: "List of instances: {{ aws_instance_ids }}"
 
   - name: "{{ aws_region }}: Assign missing AlwaysUp tag"
     ec2_tag:
