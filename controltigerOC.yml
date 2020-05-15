@@ -9,7 +9,7 @@
 
 
     tasks:
-    - name: Shutting down Tiger Instances Now!!
+    - name: Setting Openshift Cluster servers in {{region}} to {{state}} please wait.
       ec2_instance:
         region: "{{region}}"
         state: "{{state}}"
